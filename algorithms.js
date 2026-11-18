@@ -1,57 +1,58 @@
-async function bfs(grid, drawCell, sleep) {
+//creating delay for async functions inside algorithms.js
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve));
+
+async function bfs(canvas, grid, drawCell) {
     const rows = grid.length;
     const cols = grid[0].length;
 
-    const start = { row: 0, col: 0 };
-    const finish = { row: rows - 1, col: cols - 1 };
+    const start = {
+        row: 0, 
+        col: 0
+    };
+
+    const finish = {
+        row: rows - 1, 
+        col: cols - 1
+    };
 
     const visited = Array.from(
-        { length: rows },
+        {length: rows},
         () => Array(cols).fill(false)
     );
 
     const parents = Array.from(
-        { length: rows },
+        {length: rows},
         () => Array(cols).fill(null)
     );
 
-    // Queue with a head pointer
     const queue = [start];
     let head = 0;
 
     visited[start.row][start.col] = true;
 
     const directions = [
-        [-1, 0], // Up
-        [1, 0],  // Down
-        [0, -1], // Left
-        [0, 1]   // Right
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1]
     ];
 
     while (head < queue.length) {
-
         const current = queue[head++];
 
-        // Visualize explored cell
-        drawCell(current.row, current.col, "lightblue");
-
-        await sleep(1);
+        drawCell(canvas, current.row, current.col, "lightblue");
 
         // Check if we reached the finish
-        if (
-            current.row === finish.row &&
-            current.col === finish.col
-        ) {
+        if (current.row === finish.row && current.col === finish.col) {
             break;
         }
 
-        // Explore neighbors
         for (const [dr, dc] of directions) {
-
             const newRow = current.row + dr;
             const newCol = current.col + dc;
 
-            // Check boundaries
             if (
                 newRow < 0 ||
                 newRow >= rows ||
@@ -63,7 +64,6 @@ async function bfs(grid, drawCell, sleep) {
 
             const neighbor = grid[newRow][newCol];
 
-            // Skip obstacles and visited cells
             if (neighbor.value === 1 || visited[newRow][newCol]) {
                 continue;
             }
@@ -77,9 +77,13 @@ async function bfs(grid, drawCell, sleep) {
                 col: newCol
             });
         }
+
+        // Allow the browser to render every 2 explored cells
+        if (head % 2 === 0) {
+            await nextFrame();
+        }
     }
 
-    // Check if finish was reached
     if (!visited[finish.row][finish.col]) {
         console.log("No path found");
         return null;
@@ -99,14 +103,14 @@ async function bfs(grid, drawCell, sleep) {
 
     // Draw final path
     for (const cell of path) {
-        drawCell(cell.row, cell.col, "yellow");
-        await sleep(0.01);
+        drawCell(canvas, cell.row, cell.col, "yellow");
+        await nextFrame();
     }
 
     return path;
 }
 
-async function dijkstra(grid, drawCell, sleep) {
+async function dijkstra(canvas, grid, drawCell) {
     const rows = grid.length;
     const cols = grid[0].length;
 
@@ -165,7 +169,7 @@ async function dijkstra(grid, drawCell, sleep) {
         visited[current.row][current.col] = true;
 
         // Visualize the current cell
-        drawCell(current.row, current.col, "lightblue");
+        drawCell(canvas, current.row, current.col, "lightblue");
 
         await sleep(0.1);
 
@@ -240,7 +244,7 @@ async function dijkstra(grid, drawCell, sleep) {
 
     // Draw the shortest path
     for (const cell of path) {
-        drawCell(cell.row, cell.col, "yellow");
+        drawCell(canvas, cell.row, cell.col, "yellow");
         await sleep(0.001);
     }
 

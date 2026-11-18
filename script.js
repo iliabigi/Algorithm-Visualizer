@@ -10,8 +10,8 @@ const addButton = document.querySelector(".addButton");
 canvas.style.backgroundColor = "white";
 canvas.style.border = "1px solid red";
 
-const canvasHeight = 400;
-const canvasWidth= 400;
+const canvasHeight = 250;
+const canvasWidth= 250;
 
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
@@ -79,17 +79,7 @@ function initCopy(canvas, grid) {
     }
 }
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-function drawCell(row, col, color) {
-    const cell = grid[row][col]
-    const ctx = canvas.getContext("2d");
-    ctx.fillStyle = color;
-    ctx.fillRect(cell.x, cell.y, 5, 5);
-}
-
-initWhiteNoise(canvas);
-
+//to create another copy canvas using the add button
 addButton.addEventListener("click", e => {
     console.log("HIIII");
     let newCanvas = document.createElement("canvas");
@@ -102,5 +92,18 @@ addButton.addEventListener("click", e => {
     newCanvas.height = canvasHeight;
 
     initCopy(newCanvas, grid);
-
 })
+
+
+
+//to change the color of canvas' cells
+function drawCell(canvas, row, col, color) {
+    const cell = grid[row][col]
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = color;
+    ctx.fillRect(cell.x, cell.y, 5, 5);
+}
+
+
+initWhiteNoise(canvas);
+console.log(algorithms.dijkstra(canvas, grid, drawCell));
