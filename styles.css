@@ -2,10 +2,12 @@ body {
     min-height: 100vh;
 }
 
-#canvas {
+
+.mainCanvas,
+.canvas {
     background-color: black;
-    width: 250;
-    height: 250;    
+    /* width: 500; */
+    /* height: 500;     */
     /* height: 100%; */
     /* width: 100%; */
     /* display: block; */

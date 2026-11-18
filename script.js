@@ -1,14 +1,20 @@
 import * as algorithms from "./algorithms.js";
 
 const body = document.querySelector("body");
-const canvas = document.querySelector("#canvas");
+const canvasDiv = document.querySelector(".canvases");
+const canvas = document.querySelector(".mainCanvas");
+
+const addButton = document.querySelector(".addButton");
 
 
 canvas.style.backgroundColor = "white";
 canvas.style.border = "1px solid red";
 
-canvas.width = 250;
-canvas.height = 250;
+const canvasHeight = 400;
+const canvasWidth= 400;
+
+canvas.width = canvasWidth;
+canvas.height = canvasHeight;
 
 
 const cell = 5;
@@ -84,15 +90,17 @@ function drawCell(row, col, color) {
 
 initWhiteNoise(canvas);
 
-let newCanvas = document.createElement("canvas");
-body.appendChild(newCanvas);
-newCanvas.style.backgroundColor = "white";
-newCanvas.style.border = "1px solid red";
+addButton.addEventListener("click", e => {
+    console.log("HIIII");
+    let newCanvas = document.createElement("canvas");
+    canvasDiv.appendChild(newCanvas);
+    newCanvas.classList.add("canvas");
 
-newCanvas.width = 250;
-newCanvas.height = 250;
+    newCanvas.style.backgroundColor = "white";
+    newCanvas.style.border = "1px solid red";
+    newCanvas.width = canvasWidth;
+    newCanvas.height = canvasHeight;
 
-// initWhiteNoise(newCanvas);
-initCopy(newCanvas, grid);
+    initCopy(newCanvas, grid);
 
-// algorithms.dijkstra(grid, drawCell, sleep);
+})
