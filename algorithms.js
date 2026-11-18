@@ -3,7 +3,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve));
 
-async function bfs(canvas, grid, drawCell) {
+async function bfs(canvas, grid, drawCell, batchSize = 5) {
     const rows = grid.length;
     const cols = grid[0].length;
 
@@ -79,7 +79,7 @@ async function bfs(canvas, grid, drawCell) {
         }
 
         // Allow the browser to render every 2 explored cells
-        if (head % 2 === 0) {
+        if (head % batchSize === 0) {
             await nextFrame();
         }
     }
@@ -110,19 +110,14 @@ async function bfs(canvas, grid, drawCell) {
     return path;
 }
 
-async function dijkstra(canvas, grid, drawCell) {
+async function dijkstra(canvas, grid, drawCell, batchSize = 5) {
     const rows = grid.length;
-    const cols = grid[0].length;
+    const cols = grid[0]?.length;
+
+    if (!rows || !cols) return null;
 
     const start = { row: 0, col: 0 };
     const finish = { row: rows - 1, col: cols - 1 };
-
-    // Make sure start and finish are walkable
-    grid[start.row][start.col].value = 0;
-    grid[start.row][start.col].weight = 1;
-
-    grid[finish.row][finish.col].value = 0;
-    grid[finish.row][finish.col].weight = 1;
 
     // Initialize distances
     const distances = Array.from(
@@ -130,7 +125,7 @@ async function dijkstra(canvas, grid, drawCell) {
         () => Array(cols).fill(Infinity)
     );
 
-    // Store the previous cell for path reconstruction
+    // Store previous cells
     const parents = Array.from(
         { length: rows },
         () => Array(cols).fill(null)
@@ -141,53 +136,61 @@ async function dijkstra(canvas, grid, drawCell) {
         () => Array(cols).fill(false)
     );
 
-    // Starting distance is zero
     distances[start.row][start.col] = 0;
 
-    // Priority queue (simple array implementation)
-    const queue = [start];
+    // Priority queue
+    const queue = new MinHeap();
+
+    queue.push({
+        ...start,
+        distance: 0
+    });
 
     const directions = [
-        [-1, 0], // Up
-        [1, 0],  // Down
-        [0, -1], // Left
-        [0, 1]   // Right
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1]
     ];
+
+    let processed = 0;
 
     while (queue.length > 0) {
 
         // Get the cell with the smallest distance
-        queue.sort((a, b) =>
-            distances[a.row][a.col] - distances[b.row][b.col]
-        );
+        const current = queue.pop();
 
-        const current = queue.shift();
+        const { row, col, distance } = current;
 
-        // Ignore already visited cells
-        if (visited[current.row][current.col]) continue;
+        // Skip outdated or already visited entries
+        if (
+            visited[row][col] ||
+            distance !== distances[row][col]
+        ) {
+            continue;
+        }
 
-        visited[current.row][current.col] = true;
+        visited[row][col] = true;
 
-        // Visualize the current cell
-        drawCell(canvas, current.row, current.col, "lightblue");
+        // Visualize explored cell
+        drawCell(canvas, row, col, "lightblue");
 
-        await sleep(0.1);
+        processed++;
 
         // Stop when we reach the finish
         if (
-            current.row === finish.row &&
-            current.col === finish.col
+            row === finish.row &&
+            col === finish.col
         ) {
             break;
         }
 
         // Explore neighbors
         for (const [dr, dc] of directions) {
+            const newRow = row + dr;
+            const newCol = col + dc;
 
-            const newRow = current.row + dr;
-            const newCol = current.col + dc;
-
-            // Check grid boundaries
+            // Check boundaries
             if (
                 newRow < 0 ||
                 newRow >= rows ||
@@ -199,38 +202,46 @@ async function dijkstra(canvas, grid, drawCell) {
 
             const neighbor = grid[newRow][newCol];
 
-            // Skip obstacles and already visited cells
-            if (neighbor.value === 1 || visited[newRow][newCol]) {
+            // Skip obstacles and visited cells
+            if (
+                neighbor.value === 1 ||
+                visited[newRow][newCol]
+            ) {
                 continue;
             }
 
-            // Calculate the new distance
+            // Calculate new distance
             const newDistance =
-                distances[current.row][current.col] +
-                neighbor.weight;
+                distance + neighbor.weight;
 
-            // Update if we found a cheaper path
+            // Update if a cheaper path is found
             if (newDistance < distances[newRow][newCol]) {
 
                 distances[newRow][newCol] = newDistance;
 
-                parents[newRow][newCol] = current;
+                parents[newRow][newCol] = { row, col };
 
                 queue.push({
                     row: newRow,
-                    col: newCol
+                    col: newCol,
+                    distance: newDistance
                 });
             }
+        }
+
+        // Allow the browser to render periodically
+        if (processed % batchSize === 0) {
+            await nextFrame();
         }
     }
 
     // Check whether a path was found
     if (distances[finish.row][finish.col] === Infinity) {
         console.log("No path found");
-        return;
+        return null;
     }
 
-    // Reconstruct the shortest path
+    // Reconstruct shortest path
     const path = [];
 
     let current = finish;
@@ -242,15 +253,95 @@ async function dijkstra(canvas, grid, drawCell) {
 
     path.reverse();
 
-    // Draw the shortest path
+    // Draw shortest path
     for (const cell of path) {
         drawCell(canvas, cell.row, cell.col, "yellow");
-        await sleep(0.001);
+        await nextFrame();
     }
 
     console.log("Shortest path:", path);
     console.log("Total cost:", distances[finish.row][finish.col]);
+
+    return path;
 }
+
+
+// Binary min-heap
+class MinHeap {
+    constructor() {
+        this.heap = [];
+    }
+
+    push(item) {
+        const heap = this.heap;
+
+        heap.push(item);
+
+        let index = heap.length - 1;
+
+        while (index > 0) {
+            const parent = Math.floor((index - 1) / 2);
+
+            if (heap[parent].distance <= heap[index].distance) {
+                break;
+            }
+
+            [heap[parent], heap[index]] = [heap[index], heap[parent]];
+
+            index = parent;
+        }
+    }
+
+    pop() {
+        const heap = this.heap;
+
+        if (heap.length === 0) return null;
+
+        const min = heap[0];
+        const last = heap.pop();
+
+        if (heap.length > 0) {
+            heap[0] = last;
+
+            let index = 0;
+
+            while (true) {
+                const left = 2 * index + 1;
+                const right = 2 * index + 2;
+
+                let smallest = index;
+
+                if (
+                    left < heap.length &&
+                    heap[left].distance < heap[smallest].distance
+                ) {
+                    smallest = left;
+                }
+
+                if (
+                    right < heap.length &&
+                    heap[right].distance < heap[smallest].distance
+                ) {
+                    smallest = right;
+                }
+
+                if (smallest === index) break;
+
+                [heap[index], heap[smallest]] =
+                    [heap[smallest], heap[index]];
+
+                index = smallest;
+            }
+        }
+
+        return min;
+    }
+
+    get length() {
+        return this.heap.length;
+    }
+}
+
 
 
 export {
