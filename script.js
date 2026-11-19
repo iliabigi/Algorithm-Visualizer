@@ -2,26 +2,22 @@ import * as algorithms from "./algorithms.js";
 
 const body = document.querySelector("body");
 const canvasDiv = document.querySelector(".canvases");
-const canvasContainer = document.querySelector(".containCanvas");
 const canvas = document.querySelector(".mainCanvas");
 
-const addButton = document.querySelector(".addButton");
 
+const addButton = document.querySelector(".addButton");
 
 const algorithmsList = [
     "A*", "Weighted A*",
     "BFS", "Dijkstra"
 ];
 
-canvas.style.backgroundColor = "white";
-// canvas.style.border = "1px solid red";
-
 const canvasHeight = 500;
 const canvasWidth= 500;
 
+canvas.style.backgroundColor = "white";
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
-
 
 const cell = 5;
 const row = canvas.height / cell;
@@ -86,20 +82,18 @@ function initCopy(canvas, grid) {
 }
 
 //to create another copy canvas using the add button
+
 addButton.addEventListener("click", e => {
-    console.log("HIIII");
     let newCanvas = document.createElement("canvas");
-    // canvasDiv.appendChild(newCanvas);
     newCanvas.classList.add("canvas");
 
     let newDiv = document.createElement("div");
     newDiv.classList.add("containCanvas");
+
     newDiv.appendChild(newCanvas);
     canvasDiv.appendChild(newDiv);
     
-
     let newSelect = document.createElement("select");
-    let newOption = document.createElement("option");
 
     algorithmsList.forEach(val => {
         let newOption = document.createElement("option");
@@ -111,18 +105,27 @@ addButton.addEventListener("click", e => {
 
     newDiv.appendChild(newSelect);
 
-    
-    
+    let canvasChildren = canvasDiv.children;
+
+    if (canvasChildren.length === 1) {
+        canvasChildren[0].style.gridColumn = "2";
+    } 
+    else if (canvasChildren.length === 2) {
+        canvasChildren[0].style.gridColumn = "2";
+        canvasChildren[1].style.gridColumn = "3";
+    } 
+    else if (canvasChildren.length === 3) {
+        canvasChildren[0].style.gridColumn = "2";
+        canvasChildren[1].style.gridColumn = "3";
+        canvasChildren[2].style.gridColumn = "1";
+        canvasChildren[2].style.gridRow = "1";
+    }
 
     newCanvas.style.backgroundColor = "white";
-    // newCanvas.style.border = "1px solid red";
     newCanvas.width = canvasWidth;
     newCanvas.height = canvasHeight;
 
     initCopy(newCanvas, grid);
-
-    let algorithmButton = document.createElement("button");
-    newCanvas.appendChild(algorithmButton);
 })
 
 //to change the color of canvas' cells
@@ -135,4 +138,5 @@ function drawCell(canvas, row, col, color) {
 
 
 initWhiteNoise(canvas);
+
 console.log(algorithms.A_starWeighted(canvas, grid, drawCell, 3));
