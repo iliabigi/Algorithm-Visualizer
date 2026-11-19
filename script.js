@@ -8,10 +8,10 @@ const addButton = document.querySelector(".addButton");
 
 
 canvas.style.backgroundColor = "white";
-canvas.style.border = "1px solid red";
+// canvas.style.border = "1px solid red";
 
-const canvasHeight = 250;
-const canvasWidth= 250;
+const canvasHeight = 500;
+const canvasWidth= 500;
 
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
@@ -30,15 +30,15 @@ class Map {
         this.ctx = canvas.getContext("2d");
     }
     drawWhiteNoise() {
-        if (this.noise <= 0.4) {
+        if (this.noise <= 0.5) {
             this.ctx.fillStyle = "white";
             this.value = 0;
             this.weight = 1;
         }
-        else if (this.noise > 0.4 && this.noise <= 0.8) {
-            this.ctx.fillStyle = "gray";
+        else if (this.noise > 0.5 && this.noise <= 2) {
+            this.ctx.fillStyle = "green";
             this.value = 0;
-            this.weight = 5;
+            this.weight = 3;
         } else {
             this.ctx.fillStyle = "black";
             this.value = 1;
@@ -69,8 +69,8 @@ function initCopy(canvas, grid) {
             let obj =  grid[i][j];
             if (obj.weight === 1) {
                 ctx.fillStyle = "white" 
-            } else if (obj.weight === 5) {
-                ctx.fillStyle = "gray"
+            } else if (obj.weight === 3) {
+                ctx.fillStyle = "green"
             } else {
                 ctx.fillStyle = "black"
             }
@@ -94,8 +94,6 @@ addButton.addEventListener("click", e => {
     initCopy(newCanvas, grid);
 })
 
-
-
 //to change the color of canvas' cells
 function drawCell(canvas, row, col, color) {
     const cell = grid[row][col]
@@ -106,4 +104,4 @@ function drawCell(canvas, row, col, color) {
 
 
 initWhiteNoise(canvas);
-console.log(algorithms.dijkstra(canvas, grid, drawCell));
+console.log(algorithms.A_starWeighted(canvas, grid, drawCell, 3));
