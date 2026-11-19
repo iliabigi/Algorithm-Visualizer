@@ -2,10 +2,16 @@ import * as algorithms from "./algorithms.js";
 
 const body = document.querySelector("body");
 const canvasDiv = document.querySelector(".canvases");
+const canvasContainer = document.querySelector(".containCanvas");
 const canvas = document.querySelector(".mainCanvas");
 
 const addButton = document.querySelector(".addButton");
 
+
+const algorithmsList = [
+    "A*", "Weighted A*",
+    "BFS", "Dijkstra"
+];
 
 canvas.style.backgroundColor = "white";
 // canvas.style.border = "1px solid red";
@@ -83,8 +89,30 @@ function initCopy(canvas, grid) {
 addButton.addEventListener("click", e => {
     console.log("HIIII");
     let newCanvas = document.createElement("canvas");
-    canvasDiv.appendChild(newCanvas);
+    // canvasDiv.appendChild(newCanvas);
     newCanvas.classList.add("canvas");
+
+    let newDiv = document.createElement("div");
+    newDiv.classList.add("containCanvas");
+    newDiv.appendChild(newCanvas);
+    canvasDiv.appendChild(newDiv);
+    
+
+    let newSelect = document.createElement("select");
+    let newOption = document.createElement("option");
+
+    algorithmsList.forEach(val => {
+        let newOption = document.createElement("option");
+        newOption.value = val;
+        newOption.textContent = val;
+
+        newSelect.appendChild(newOption);
+    })
+
+    newDiv.appendChild(newSelect);
+
+    
+    
 
     newCanvas.style.backgroundColor = "white";
     // newCanvas.style.border = "1px solid red";
