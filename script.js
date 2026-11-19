@@ -30,12 +30,12 @@ class Map {
         this.ctx = canvas.getContext("2d");
     }
     drawWhiteNoise() {
-        if (this.noise <= 0.5) {
+        if (this.noise <= 0.8) {
             this.ctx.fillStyle = "white";
             this.value = 0;
             this.weight = 1;
         }
-        else if (this.noise > 0.5 && this.noise <= 2) {
+        else if (this.noise > 0.9 && this.noise <= 1) {
             this.ctx.fillStyle = "green";
             this.value = 0;
             this.weight = 3;
@@ -87,11 +87,14 @@ addButton.addEventListener("click", e => {
     newCanvas.classList.add("canvas");
 
     newCanvas.style.backgroundColor = "white";
-    newCanvas.style.border = "1px solid red";
+    // newCanvas.style.border = "1px solid red";
     newCanvas.width = canvasWidth;
     newCanvas.height = canvasHeight;
 
     initCopy(newCanvas, grid);
+
+    let algorithmButton = document.createElement("button");
+    newCanvas.appendChild(algorithmButton);
 })
 
 //to change the color of canvas' cells
