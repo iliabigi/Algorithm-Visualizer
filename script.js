@@ -11,7 +11,7 @@ const addButton = document.querySelector(".addButton");
 
 const mainSelect = document.querySelector(".mainSelect");
 
-const options = [];
+const selects = [];
 const newCanvases = [];
 
 const algorithmsList = [
@@ -90,7 +90,12 @@ function initCopy(canvas, grid) {
 
 
 startButton.addEventListener("click", e => {
-    clearCanvas();
+    clearCanvas(canvas);
+    for (let i = 0; i < selects.length; i++) {
+        clearCanvas(newCanvases[i]);
+    }
+
+    //main canvas select value
     switch (mainSelect.value) {
         case "A*":
             algorithms.A_star(canvas, grid, drawCell);
@@ -105,10 +110,29 @@ startButton.addEventListener("click", e => {
             algorithms.dijkstra(canvas, grid, drawCell);
             break;
     }
+
+    //additional canvases select value
+    for (let i = 0; i < selects.length; i++) {
+         switch (selects[i].value) {
+        case "A*":
+            algorithms.A_star(newCanvases[i], grid, drawCell);
+            break;
+        case "Weighted A*":
+            algorithms.A_starWeighted(newCanvases[i], grid, drawCell, 3);
+            break;
+        case "BFS":
+            algorithms.bfs(newCanvases[i], grid, drawCell);
+            break;
+        case "Dijkstra":
+            algorithms.dijkstra(newCanvases[i], grid, drawCell);
+            break;
+    }
+
+        
+    }
 })
 
 //to create another copy canvas using the add button
-
 addButton.addEventListener("click", e => {
     let newCanvas = document.createElement("canvas");
     newCanvas.classList.add("canvas");
@@ -130,6 +154,8 @@ addButton.addEventListener("click", e => {
     })
 
     newDiv.appendChild(newSelect);
+    selects.push(newSelect);
+
 
     let canvasChildren = canvasDiv.children;
 
@@ -152,6 +178,7 @@ addButton.addEventListener("click", e => {
     newCanvas.height = canvasHeight;
 
     initCopy(newCanvas, grid);
+    newCanvases.push(newCanvas);
 })
 
 //to change the color of canvas' cells
@@ -162,7 +189,8 @@ function drawCell(canvas, row, col, color) {
     ctx.fillRect(cell.x, cell.y, 5, 5);
 }
 
-function clearCanvas() {
+//Clear canvas used in the start button
+function clearCanvas(canvas) {
     initCopy(canvas, grid);
 }
 
