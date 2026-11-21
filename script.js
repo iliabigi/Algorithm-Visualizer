@@ -5,15 +5,22 @@ const canvasDiv = document.querySelector(".canvases");
 const canvas = document.querySelector(".mainCanvas");
 
 
+
+const startButton = document.querySelector(".startButton");
 const addButton = document.querySelector(".addButton");
+
+const mainSelect = document.querySelector(".mainSelect");
+
+const options = [];
+const newCanvases = [];
 
 const algorithmsList = [
     "A*", "Weighted A*",
     "BFS", "Dijkstra"
 ];
 
-const canvasHeight = 500;
-const canvasWidth= 500;
+const canvasHeight = 250;
+const canvasWidth= 250;
 
 canvas.style.backgroundColor = "white";
 canvas.width = canvasWidth;
@@ -81,6 +88,25 @@ function initCopy(canvas, grid) {
     }
 }
 
+
+startButton.addEventListener("click", e => {
+    clearCanvas();
+    switch (mainSelect.value) {
+        case "A*":
+            algorithms.A_star(canvas, grid, drawCell);
+            break;
+        case "Weighted A*":
+            algorithms.A_starWeighted(canvas, grid, drawCell, 3);
+            break;
+        case "BFS":
+            algorithms.bfs(canvas, grid, drawCell);
+            break;
+        case "Dijkstra":
+            algorithms.dijkstra(canvas, grid, drawCell);
+            break;
+    }
+})
+
 //to create another copy canvas using the add button
 
 addButton.addEventListener("click", e => {
@@ -136,7 +162,10 @@ function drawCell(canvas, row, col, color) {
     ctx.fillRect(cell.x, cell.y, 5, 5);
 }
 
+function clearCanvas() {
+    initCopy(canvas, grid);
+}
+
 
 initWhiteNoise(canvas);
 
-console.log(algorithms.A_starWeighted(canvas, grid, drawCell, 3));

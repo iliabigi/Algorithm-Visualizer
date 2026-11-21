@@ -9,17 +9,19 @@
 </head>
 
 <body>
+    <div class="top">
+        <button class="startButton">START</button>
+    </div>
     <div class="canvases">
 
         <div class="containCanvas">
 
             <canvas class="mainCanvas"></canvas>
-            <select name="algorithms" class="selectAlgo">
-                <option>A*</option>
-                <option>Weighted A*</option>
-                <option>Weighted A*</option>
-                <option>Bfs</option>
-                <option>Dijkstra</option>
+            <select name="algorithms" class="mainSelect">
+                <option value="A*">A*</option>
+                <option value="Weighted A*">Weighted A*</option>
+                <option value="BFS">BFS</option>
+                <option value="Dijkstra">Dijkstra</option>
             </select>
 
         </div>
@@ -27,7 +29,7 @@
     </div>
 
      <button class="addButton">addButton</button>
-     
+
 
 </body>
 </html>
