@@ -11,8 +11,12 @@ const addButton = document.querySelector(".addButton");
 
 const mainSelect = document.querySelector(".mainSelect");
 
+
 const selects = [];
-const newCanvases = [];
+selects.push(mainSelect);
+const allCanvases = [];
+allCanvases.push(canvas);
+
 
 const algorithmsList = [
     "A*", "Weighted A*",
@@ -92,43 +96,24 @@ function initCopy(canvas, grid) {
 startButton.addEventListener("click", e => {
     clearCanvas(canvas);
     for (let i = 0; i < selects.length; i++) {
-        clearCanvas(newCanvases[i]);
+        clearCanvas(allCanvases[i]);
     }
 
-    //main canvas select value
-    switch (mainSelect.value) {
-        case "A*":
-            algorithms.A_star(canvas, grid, drawCell);
-            break;
-        case "Weighted A*":
-            algorithms.A_starWeighted(canvas, grid, drawCell, 3);
-            break;
-        case "BFS":
-            algorithms.bfs(canvas, grid, drawCell);
-            break;
-        case "Dijkstra":
-            algorithms.dijkstra(canvas, grid, drawCell);
-            break;
-    }
-
-    //additional canvases select value
     for (let i = 0; i < selects.length; i++) {
-         switch (selects[i].value) {
-        case "A*":
-            algorithms.A_star(newCanvases[i], grid, drawCell);
-            break;
-        case "Weighted A*":
-            algorithms.A_starWeighted(newCanvases[i], grid, drawCell, 3);
-            break;
-        case "BFS":
-            algorithms.bfs(newCanvases[i], grid, drawCell);
-            break;
-        case "Dijkstra":
-            algorithms.dijkstra(newCanvases[i], grid, drawCell);
-            break;
-    }
-
-        
+        switch (selects[i].value) {
+            case "A*":
+                algorithms.A_star(allCanvases[i], grid, drawCell);
+                break;
+            case "Weighted A*":
+                algorithms.A_starWeighted(allCanvases[i], grid, drawCell, 3);
+                break;
+            case "BFS":
+                algorithms.bfs(allCanvases[i], grid, drawCell);
+                break;
+            case "Dijkstra":
+                algorithms.dijkstra(allCanvases[i], grid, drawCell);
+                break;
+        }
     }
 })
 
@@ -178,7 +163,7 @@ addButton.addEventListener("click", e => {
     newCanvas.height = canvasHeight;
 
     initCopy(newCanvas, grid);
-    newCanvases.push(newCanvas);
+    allCanvases.push(newCanvas);
 })
 
 //to change the color of canvas' cells
