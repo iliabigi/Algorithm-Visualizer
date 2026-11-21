@@ -108,7 +108,8 @@ startButton.addEventListener("click", (e) => {
     }
 });
 
-document.addEventListener("keydown", (e) => {
+//to create another copy canvas using shift + "+" button shortcut
+document.addEventListener("keydown", e => {
     if (e.shiftKey && e.key.toLowerCase() === "+") {
         let newCanvas = document.createElement("canvas");
         newCanvas.classList.add("canvas");
@@ -136,10 +137,12 @@ document.addEventListener("keydown", (e) => {
 
         if (canvasChildren.length === 1) {
             canvasChildren[0].style.gridColumn = "2";
-        } else if (canvasChildren.length === 2) {
+        } 
+        else if (canvasChildren.length === 2) {
             canvasChildren[0].style.gridColumn = "2";
             canvasChildren[1].style.gridColumn = "3";
-        } else if (canvasChildren.length === 3) {
+        } 
+        else if (canvasChildren.length === 3) {
             canvasChildren[0].style.gridColumn = "2";
             canvasChildren[1].style.gridColumn = "3";
             canvasChildren[2].style.gridColumn = "1";
@@ -155,7 +158,14 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
-//to create another copy canvas using the add button
+//to remove one of the canvases
+document.addEventListener("keydown", e => {
+    if (e.shiftKey && e.key.toLowerCase() === "_") {
+        canvasDiv.lastElementChild.remove();
+        selects.pop();
+        allCanvases.pop();
+    }
+})
 
 //to change the color of canvas' cells
 function drawCell(canvas, row, col, color) {
