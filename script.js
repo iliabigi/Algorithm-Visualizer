@@ -175,7 +175,7 @@ canvasSize.addEventListener("input", e => {
     canvasWidth = size;
     row = canvas.height / cell;
     column = canvas.width / cell;
-    initWhiteNoise(canvas);
+    (isPerlin) ? initPerlinNoise(canvas) : initWhiteNoise(canvas);
     console.log(row);
     console.log(column);
 
@@ -281,10 +281,20 @@ document.addEventListener("keydown", e => {
 noiseSwitch.addEventListener("change", e => {
     if (noiseSwitch.checked) {
         isPerlin = true;
+        while (canvasDiv.children.length !== 1) {
+            canvasDiv.lastElementChild.remove();
+            selects.pop();
+            allCanvases.pop();
+        }
         initPerlinNoise(canvas);
 
     } else {
         isPerlin = false;
+        while (canvasDiv.children.length !== 1) {
+            canvasDiv.lastElementChild.remove();
+            selects.pop();
+            allCanvases.pop();
+        }
         initWhiteNoise(canvas);
     }
 })
@@ -305,7 +315,8 @@ function clearCanvas(canvas) {
 function regenarate() {
     grid = [];
     window.stopAlgorithm = true;
-    initWhiteNoise(canvas);
+    (isPerlin) ? initPerlinNoise(canvas) : initWhiteNoise(canvas);
+    // initWhiteNoise(canvas);
     if (allCanvases.length != 1) {
         for (let i = 1; i < allCanvases.length; i++) {
             initCopy(allCanvases[i], grid);
