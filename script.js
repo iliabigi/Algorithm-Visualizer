@@ -44,7 +44,7 @@ class Map {
         this.ctx = canvas.getContext("2d");
     }
     drawWhiteNoise() {
-        if (this.noise <= 0.8) {
+        if (this.noise < 0.9) {
             this.ctx.fillStyle = "white";
             this.value = 0;
             this.weight = 1;
@@ -109,6 +109,12 @@ canvasSize.addEventListener("input", e => {
     initWhiteNoise(canvas);
     console.log(row);
     console.log(column);
+
+    while (allCanvases.length != 1) {
+        canvasDiv.lastElementChild.remove();
+        selects.pop();
+        allCanvases.pop();
+    }
 })
 
 canvasSize.addEventListener("keydown", e => {
