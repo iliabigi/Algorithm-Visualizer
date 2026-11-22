@@ -193,6 +193,16 @@ canvasSize.addEventListener("keydown", e => {
 })
 
 startButton.addEventListener("click", e => {
+    handleStartButton();
+});
+
+document.addEventListener("keydown", e => {
+    if (e.shiftKey && e.key.toLowerCase() === "s") {
+        handleStartButton();
+    }
+})
+
+function handleStartButton() {
     window.stopAlgorithm = false;
 
     clearCanvas(canvas);
@@ -216,7 +226,8 @@ startButton.addEventListener("click", e => {
                 break;
         }
     }
-});
+}
+
 
 //to create another copy canvas using shift + "+" button shortcut
 document.addEventListener("keydown", e => {
