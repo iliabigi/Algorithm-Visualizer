@@ -7,6 +7,7 @@ const canvas = document.querySelector(".mainCanvas");
 const startButton = document.querySelector(".startButton");
 const addButton = document.querySelector(".addButton");
 const regenarateButton = document.querySelector(".regenButton");
+const noiseSwitch = document.querySelector(".noiseSwitch")
 
 const mainSelect = document.querySelector(".mainSelect");
 const canvasSize = document.querySelector(".sizeInput");
@@ -97,7 +98,8 @@ function initWhiteNoise(canvas) {
 }
 
 const scale = 0.05;
-function initPerlinNoise() {
+function initPerlinNoise(canvas) {
+    grid = [];
     isPerlin = true;
     noise.seed(Math.random());
     for (let i = 0; i < row; i++) {
@@ -273,6 +275,17 @@ document.addEventListener("keydown", e => {
         canvasDiv.lastElementChild.remove();
         selects.pop();
         allCanvases.pop();
+    }
+})
+
+noiseSwitch.addEventListener("change", e => {
+    if (noiseSwitch.checked) {
+        isPerlin = true;
+        initPerlinNoise(canvas);
+
+    } else {
+        isPerlin = false;
+        initWhiteNoise(canvas);
     }
 })
 
