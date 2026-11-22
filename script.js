@@ -340,6 +340,12 @@ regenarateButton.addEventListener("click", e => {
     regenarate();
 })
 
+document.addEventListener("keydown", e => {
+    if (e.shiftKey && e.key.toLowerCase() === "r") {
+        regenarate();
+    }
+})
+
 
 initWhiteNoise(canvas);
 
