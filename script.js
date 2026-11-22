@@ -33,6 +33,8 @@ let row = canvas.height / cell;
 let column = canvas.width / cell;
 let grid = [];
 
+let isPerlin = false;
+
 console.log(row);
 console.log(column);
 
@@ -44,7 +46,7 @@ class Map {
         this.ctx = canvas.getContext("2d");
     }
     drawWhiteNoise() {
-        if (this.noise < 0.9) {
+        if (this.noiseSeed < 0.9) {
             this.ctx.fillStyle = "white";
             this.value = 0;
             this.weight = 1;
@@ -86,7 +88,7 @@ function initWhiteNoise(canvas) {
     for (let i = 0; i < row; i++) {
         const currentRow = [];
         for (let j = 0; j < column; j++) {
-            let obj = new Map(canvas, j * 5, i * 5);
+            let obj = new Map(canvas, j * 5, i * 5, Math.random());
             obj.drawWhiteNoise();
             currentRow.push(obj);
         }
@@ -121,7 +123,6 @@ function initPerlinNoise() {
     }
 }
 
-console.log(grid.map(row => row.map(column => column.weight)));
 //for copying the original canvas into newly created canvases
 function initCopy(canvas, grid) {
     if (!isPerlin) {
@@ -268,6 +269,7 @@ document.addEventListener("keydown", e => {
 //to remove one of the canvases
 document.addEventListener("keydown", e => {
     if (e.shiftKey && e.key.toLowerCase() === "_") {
+        if (canvasDiv.children.length === 1) return
         canvasDiv.lastElementChild.remove();
         selects.pop();
         allCanvases.pop();
@@ -307,6 +309,6 @@ regenarateButton.addEventListener("click", e => {
 initWhiteNoise(canvas);
 
 
-initPerlinNoise();
+// initPerlinNoise();
 
 // console.log(noise.seed());
