@@ -156,6 +156,7 @@ async function bfs(canvas, grid, drawCell, batchSize = 5) {
 
         // Allow the browser to render every 2 explored cells
         if (head % batchSize === 0) {
+            if (window.stopAlgorithm) return
             await nextFrame();
         }
     }
@@ -179,6 +180,7 @@ async function bfs(canvas, grid, drawCell, batchSize = 5) {
 
     // Draw final path
     for (const cell of path) {
+        if (window.stopAlgorithm) return
         drawCell(canvas, cell.row, cell.col, "yellow");
         await nextFrame();
     }
@@ -307,6 +309,7 @@ async function dijkstra(canvas, grid, drawCell, batchSize = 5) {
 
         // Allow the browser to render periodically
         if (processed % batchSize === 0) {
+            if (window.stopAlgorithm) return
             await nextFrame();
         }
     }
@@ -331,6 +334,7 @@ async function dijkstra(canvas, grid, drawCell, batchSize = 5) {
 
     // Draw shortest path
     for (const cell of path) {
+        if (window.stopAlgorithm) return
         drawCell(canvas, cell.row, cell.col, "yellow");
         await nextFrame();
     }
@@ -449,6 +453,7 @@ async function A_star(canvas, grid, drawCell, weight = 1, batchSize = 5) {
         }
 
         if (processed % batchSize === 0) {
+            if (window.stopAlgorithm) return
             await nextFrame();
         }
     }
@@ -471,6 +476,7 @@ async function A_star(canvas, grid, drawCell, weight = 1, batchSize = 5) {
 
     // Draw final path
     for (const cell of path) {
+        if (window.stopAlgorithm) return
         drawCell(canvas, cell.row, cell.col, "yellow");
         await nextFrame();
     }
@@ -480,151 +486,9 @@ async function A_star(canvas, grid, drawCell, weight = 1, batchSize = 5) {
 
     return path;
 }
-
-async function A_starWeighted(canvas, grid, drawCell, weight, batchSize = 5) {
-    const rows = grid.length;
-    const cols = grid[0]?.length;
-
-    if (!rows || !cols) return null;
-
-    const start = { row: 0, col: 0 };
-    const finish = { row: rows - 1, col: cols - 1 };
-
-    // Manhattan distance heuristic (4-directional movement)
-    // Admissible as long as the minimum cell weight is 1, which it is in your grid
-    const heuristic = (row, col) =>
-        Math.abs(row - finish.row) + Math.abs(col - finish.col);
-
-    // gScore = cost of the cheapest known path from start to this cell
-    const gScore = Array.from(
-        { length: rows },
-        () => Array(cols).fill(Infinity)
-    );
-
-    const parents = Array.from(
-        { length: rows },
-        () => Array(cols).fill(null)
-    );
-
-    const visited = Array.from(
-        { length: rows },
-        () => Array(cols).fill(false)
-    );
-
-    gScore[start.row][start.col] = 0;
-
-    // Priority queue ordered by f = g + h
-    // NOTE: your MinHeap must compare on the `distance` field.
-    // Here, `distance` holds the f-score, and `g` is stored separately.
-    const queue = new MinHeap();
-
-    queue.push({
-        ...start,
-        g: 0,
-        distance: heuristic(start.row, start.col) * weight
-    });
-
-    const directions = [
-        [-1, 0],
-        [1, 0],
-        [0, -1],
-        [0, 1]
-    ];
-
-    let processed = 0;
-
-    while (queue.length > 0) {
-        const current = queue.pop();
-        const { row, col, g } = current;
-
-        // Skip stale entries (a cheaper path to this cell was already found)
-        if (visited[row][col] || g !== gScore[row][col]) {
-            continue;
-        }
-
-        visited[row][col] = true;
-
-        drawCell(canvas, row, col, "lightblue");
-
-        processed++;
-
-        if (row === finish.row && col === finish.col) {
-            break;
-        }
-
-        for (const [dr, dc] of directions) {
-            const newRow = row + dr;
-            const newCol = col + dc;
-
-            if (
-                newRow < 0 ||
-                newRow >= rows ||
-                newCol < 0 ||
-                newCol >= cols
-            ) {
-                continue;
-            }
-
-            const neighbor = grid[newRow][newCol];
-
-            if (neighbor.value === 1 || visited[newRow][newCol]) {
-                continue;
-            }
-
-            const tentativeG = g + neighbor.weight;
-
-            if (tentativeG < gScore[newRow][newCol]) {
-                gScore[newRow][newCol] = tentativeG;
-                parents[newRow][newCol] = { row, col };
-
-                const h = heuristic(newRow, newCol);
-
-                queue.push({
-                row: newRow,
-                col: newCol,
-                g: tentativeG,
-                distance: tentativeG + h * weight   // tiny tie-breaker
-                });
-            }
-        }
-
-        if (processed % batchSize === 0) {
-            await nextFrame();
-        }
-    }
-
-    if (gScore[finish.row][finish.col] === Infinity) {
-        console.log("No path found");
-        return null;
-    }
-
-    // Reconstruct path
-    const path = [];
-    let current = finish;
-
-    while (current !== null) {
-        path.push(current);
-        current = parents[current.row][current.col];
-    }
-
-    path.reverse();
-
-    // Draw final path
-    for (const cell of path) {
-        drawCell(canvas, cell.row, cell.col, "yellow");
-        await nextFrame();
-    }
-
-    console.log("Path length (cells):", path.length);
-    console.log("Total cost:", gScore[finish.row][finish.col]);
-
-    return path;
-}
-
 
 export {
     bfs,
     dijkstra,
-    A_star,
-    A_starWeighted
+    A_star
 };

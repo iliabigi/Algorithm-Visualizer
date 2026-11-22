@@ -6,6 +6,7 @@ const canvas = document.querySelector(".mainCanvas");
 
 const startButton = document.querySelector(".startButton");
 const addButton = document.querySelector(".addButton");
+const regenarateButton = document.querySelector(".regenButton");
 
 const mainSelect = document.querySelector(".mainSelect");
 const canvasSize = document.querySelector(".sizeInput");
@@ -16,6 +17,8 @@ const allCanvases = [];
 allCanvases.push(canvas);
 
 const algorithmsList = ["A*", "Weighted A*", "BFS", "Dijkstra"];
+
+window.stopAlgorithm = false;
 
 let canvasHeight = 500;
 let canvasWidth = 500;
@@ -115,6 +118,8 @@ canvasSize.addEventListener("keydown", e => {
 })
 
 startButton.addEventListener("click", e => {
+    window.stopAlgorithm = false;
+
     clearCanvas(canvas);
     for (let i = 0; i < selects.length; i++) {
         clearCanvas(allCanvases[i]);
@@ -126,7 +131,7 @@ startButton.addEventListener("click", e => {
                 algorithms.A_star(allCanvases[i], grid, drawCell);
                 break;
             case "Weighted A*":
-                algorithms.A_starWeighted(allCanvases[i], grid, drawCell, 3);
+                algorithms.A_star(allCanvases[i], grid, drawCell, 3);
                 break;
             case "BFS":
                 algorithms.bfs(allCanvases[i], grid, drawCell);
@@ -209,5 +214,22 @@ function drawCell(canvas, row, col, color) {
 function clearCanvas(canvas) {
     initCopy(canvas, grid);
 }
+
+function regenarate() {
+    grid = [];
+    window.stopAlgorithm = true;
+    initWhiteNoise(canvas);
+    if (allCanvases.length != 1) {
+        for (let i = 1; i < allCanvases.length; i++) {
+            initCopy(allCanvases[i], grid);
+        }
+    }
+}
+
+
+regenarateButton.addEventListener("click", e => {
+    regenarate();
+})
+
 
 initWhiteNoise(canvas);
