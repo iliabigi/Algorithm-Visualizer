@@ -8,6 +8,7 @@ const startButton = document.querySelector(".startButton");
 const addButton = document.querySelector(".addButton");
 
 const mainSelect = document.querySelector(".mainSelect");
+const canvasSize = document.querySelector(".sizeInput");
 
 const selects = [];
 selects.push(mainSelect);
@@ -16,17 +17,21 @@ allCanvases.push(canvas);
 
 const algorithmsList = ["A*", "Weighted A*", "BFS", "Dijkstra"];
 
-const canvasHeight = 250;
-const canvasWidth = 250;
+let canvasHeight = 500;
+let canvasWidth = 500;
 
 canvas.style.backgroundColor = "white";
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 
+
 const cell = 5;
-const row = canvas.height / cell;
-const column = canvas.width / cell;
-const grid = [];
+let row = canvas.height / cell;
+let column = canvas.width / cell;
+let grid = [];
+
+console.log(row);
+console.log(column);
 
 class Map {
     constructor(canvas, x, y) {
@@ -40,11 +45,13 @@ class Map {
             this.ctx.fillStyle = "white";
             this.value = 0;
             this.weight = 1;
-        } else if (this.noise > 0.9 && this.noise <= 1) {
-            this.ctx.fillStyle = "green";
-            this.value = 0;
-            this.weight = 3;
-        } else {
+        } 
+        // else if (this.noise > 0.9 && this.noise <= 1) {
+        //     this.ctx.fillStyle = "green";
+        //     this.value = 0;
+        //     this.weight = 3;
+        // } 
+        else {
             this.ctx.fillStyle = "black";
             this.value = 1;
             this.weight = Infinity;
@@ -55,6 +62,7 @@ class Map {
 
 //generate a white noise on a canvas
 function initWhiteNoise(canvas) {
+    grid = [];
     for (let i = 0; i < row; i++) {
         const currentRow = [];
         for (let j = 0; j < column; j++) {
@@ -69,6 +77,7 @@ function initWhiteNoise(canvas) {
 //for copying the original canvas into newly created canvases
 function initCopy(canvas, grid) {
     let ctx = canvas.getContext("2d");
+    
     for (let i = 0; i < row; i++) {
         for (let j = 0; j < column; j++) {
             let obj = grid[i][j];
@@ -82,9 +91,30 @@ function initCopy(canvas, grid) {
             ctx.fillRect(j * 5, i * 5, cell, cell);
         }
     }
+    console.log(row);
+    console.log(column);
 }
 
-startButton.addEventListener("click", (e) => {
+canvasSize.addEventListener("input", e => {
+    const size = Number(canvasSize.value);
+    canvas.height = size;
+    canvas.width = size;
+    canvasHeight = size;
+    canvasWidth = size;
+    row = canvas.height / cell;
+    column = canvas.width / cell;
+    initWhiteNoise(canvas);
+    console.log(row);
+    console.log(column);
+})
+
+canvasSize.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+        canvasSize.blur();
+    }
+})
+
+startButton.addEventListener("click", e => {
     clearCanvas(canvas);
     for (let i = 0; i < selects.length; i++) {
         clearCanvas(allCanvases[i]);
