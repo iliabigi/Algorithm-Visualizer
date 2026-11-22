@@ -82,6 +82,7 @@ class Map {
 //generate a white noise on a canvas
 function initWhiteNoise(canvas) {
     grid = [];
+    isPerlin = false;
     for (let i = 0; i < row; i++) {
         const currentRow = [];
         for (let j = 0; j < column; j++) {
@@ -95,6 +96,7 @@ function initWhiteNoise(canvas) {
 
 const scale = 0.05;
 function initPerlinNoise() {
+    isPerlin = true;
     noise.seed(Math.random());
     for (let i = 0; i < row; i++) {
         const rows = [];
@@ -119,21 +121,43 @@ function initPerlinNoise() {
     }
 }
 
+console.log(grid.map(row => row.map(column => column.weight)));
 //for copying the original canvas into newly created canvases
 function initCopy(canvas, grid) {
-    let ctx = canvas.getContext("2d");
-    
-    for (let i = 0; i < row; i++) {
-        for (let j = 0; j < column; j++) {
-            let obj = grid[i][j];
-            if (obj.weight === 1) {
-                ctx.fillStyle = "white";
-            } else if (obj.weight === 3) {
-                ctx.fillStyle = "#ffb35c";
-            } else {
-                ctx.fillStyle = "black";
+    if (!isPerlin) {
+        let ctx = canvas.getContext("2d");
+        for (let i = 0; i < row; i++) {
+            for (let j = 0; j < column; j++) {
+                let obj = grid[i][j];
+                if (obj.weight === 1) {
+                    ctx.fillStyle = "white";
+                } else if (obj.weight === 3) {
+                    ctx.fillStyle = "#ffb35c";
+                } else {
+                    ctx.fillStyle = "black";
+                }
+                ctx.fillRect(j * 5, i * 5, cell, cell);
             }
-            ctx.fillRect(j * 5, i * 5, cell, cell);
+        }
+    } else if (isPerlin) {
+        let ctx = canvas.getContext("2d");
+        for (let i = 0; i < row; i++) {
+            for (let j = 0; j < column; j++) {
+                let obj = grid[i][j];
+                console.log(obj.weight);
+
+                if (obj.weight === 1) {
+                    ctx.fillStyle = "#ffdeb8";
+                } else if (obj.weight === 5) {
+                    ctx.fillStyle = "aqua";
+                } else if (obj.weight === 10) {
+                    ctx.fillStyle = "#ffdeb8";
+                } else {
+                    ctx.fillStyle = "#ffdeb8";
+                }
+
+                ctx.fillRect(j * 5, i * 5, cell, cell);
+            }
         }
     }
     console.log(row);
