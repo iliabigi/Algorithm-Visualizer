@@ -1,28 +1,31 @@
 import * as algorithms from "./algorithms.js";
 
-const body = document.querySelector("body");
+
 const canvasDiv = document.querySelector(".canvases");
 const canvas = document.querySelector(".mainCanvas");
 
 const startButton = document.querySelector(".startButton");
-const addButton = document.querySelector(".addButton");
-const regenarateButton = document.querySelector(".regenButton");
+const regenerationButton = document.querySelector(".regenButton");
 const noiseSwitch = document.querySelector(".noiseSwitch")
+
 
 const mainSelect = document.querySelector(".mainSelect");
 const canvasSize = document.querySelector(".sizeInput");
+
 
 const selects = [];
 selects.push(mainSelect);
 const allCanvases = [];
 allCanvases.push(canvas);
 
-const algorithmsList = ["A*", "Weighted A*", "BFS", "Dijkstra"];
 
+const algorithmsList = ["A*", "Weighted A*", "BFS", "Dijkstra"];
 window.stopAlgorithm = false;
+
 
 let canvasHeight = 500;
 let canvasWidth = 500;
+
 
 canvas.style.backgroundColor = "white";
 canvas.width = canvasWidth;
@@ -34,10 +37,9 @@ let row = canvas.height / cell;
 let column = canvas.width / cell;
 let grid = [];
 
+
 let isPerlin = false;
 
-console.log(row);
-console.log(column);
 
 class Map {
     constructor(canvas, x, y, seed) {
@@ -51,13 +53,7 @@ class Map {
             this.ctx.fillStyle = "white";
             this.value = 0;
             this.weight = 1;
-        } 
-        // else if (this.noise > 0.9 && this.noise <= 1) {
-        //     this.ctx.fillStyle = "green";
-        //     this.value = 0;
-        //     this.weight = 3;
-        // } 
-        else {
+        } else {
             this.ctx.fillStyle = "black";
             this.value = 1;
             this.weight = Infinity;
@@ -67,7 +63,6 @@ class Map {
     drawPerlinNoise() {
         // let brightness = Math.floor((this.noiseSeed + 1) * 127.5);
         // this.ctx.fillStyle = `rgb(${brightness}, ${brightness}, ${brightness})`;
-
         if (this.weight === 1) {
             this.ctx.fillStyle = "#ffdeb8";
         } else if (this.weight === 5) {
@@ -167,6 +162,57 @@ function initCopy(canvas, grid) {
     console.log(column);
 }
 
+function handleStartButton() {
+    window.stopAlgorithm = false;
+
+    clearCanvas(canvas);
+    for (let i = 0; i < selects.length; i++) {
+        clearCanvas(allCanvases[i]);
+    }
+
+    for (let i = 0; i < selects.length; i++) {
+        switch (selects[i].value) {
+            case "A*":
+                algorithms.A_star(allCanvases[i], grid, drawCell);
+                break;
+            case "Weighted A*":
+                algorithms.A_star(allCanvases[i], grid, drawCell, 3);
+                break;
+            case "BFS":
+                algorithms.bfs(allCanvases[i], grid, drawCell);
+                break;
+            case "Dijkstra":
+                algorithms.dijkstra(allCanvases[i], grid, drawCell);
+                break;
+        }
+    }
+}
+
+//to change the color of canvas' cells
+function drawCell(canvas, row, col, color) {
+    const cell = grid[row][col];
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = color;
+    ctx.fillRect(cell.x, cell.y, 5, 5);
+}
+
+//Clear canvas used in the start button
+function clearCanvas(canvas) {
+    initCopy(canvas, grid);
+}
+
+function handleRegenerateButton() {
+    grid = [];
+    window.stopAlgorithm = true;
+    (isPerlin) ? initPerlinNoise(canvas) : initWhiteNoise(canvas);
+    // initWhiteNoise(canvas);
+    if (allCanvases.length != 1) {
+        for (let i = 1; i < allCanvases.length; i++) {
+            initCopy(allCanvases[i], grid);
+        }
+    }
+}
+
 canvasSize.addEventListener("input", e => {
     const size = Number(canvasSize.value);
     canvas.height = size;
@@ -196,38 +242,9 @@ startButton.addEventListener("click", e => {
     handleStartButton();
 });
 
-document.addEventListener("keydown", e => {
-    if (e.shiftKey && e.key.toLowerCase() === "s") {
-        handleStartButton();
-    }
+regenerationButton.addEventListener("click", e => {
+    handleRegenerateButton();
 })
-
-function handleStartButton() {
-    window.stopAlgorithm = false;
-
-    clearCanvas(canvas);
-    for (let i = 0; i < selects.length; i++) {
-        clearCanvas(allCanvases[i]);
-    }
-
-    for (let i = 0; i < selects.length; i++) {
-        switch (selects[i].value) {
-            case "A*":
-                algorithms.A_star(allCanvases[i], grid, drawCell);
-                break;
-            case "Weighted A*":
-                algorithms.A_star(allCanvases[i], grid, drawCell, 3);
-                break;
-            case "BFS":
-                algorithms.bfs(allCanvases[i], grid, drawCell);
-                break;
-            case "Dijkstra":
-                algorithms.dijkstra(allCanvases[i], grid, drawCell);
-                break;
-        }
-    }
-}
-
 
 //to create another copy canvas using shift + "+" button shortcut
 document.addEventListener("keydown", e => {
@@ -279,13 +296,23 @@ document.addEventListener("keydown", e => {
     }
 });
 
-//to remove one of the canvases
 document.addEventListener("keydown", e => {
+    //shortcut for removing one of the canvases
     if (e.shiftKey && e.key.toLowerCase() === "_") {
         if (canvasDiv.children.length === 1) return
         canvasDiv.lastElementChild.remove();
         selects.pop();
         allCanvases.pop();
+    }
+
+    //shortcut for the start button
+    if (e.shiftKey && e.key.toLowerCase() === "s") {
+        handleStartButton();
+    }
+
+    //shortcut for the regenerate button
+    if (e.shiftKey && e.key.toLowerCase() === "r") {
+        handleRegenerateButton();
     }
 })
 
@@ -310,46 +337,6 @@ noiseSwitch.addEventListener("change", e => {
     }
 })
 
-//to change the color of canvas' cells
-function drawCell(canvas, row, col, color) {
-    const cell = grid[row][col];
-    const ctx = canvas.getContext("2d");
-    ctx.fillStyle = color;
-    ctx.fillRect(cell.x, cell.y, 5, 5);
-}
-
-//Clear canvas used in the start button
-function clearCanvas(canvas) {
-    initCopy(canvas, grid);
-}
-
-function regenarate() {
-    grid = [];
-    window.stopAlgorithm = true;
-    (isPerlin) ? initPerlinNoise(canvas) : initWhiteNoise(canvas);
-    // initWhiteNoise(canvas);
-    if (allCanvases.length != 1) {
-        for (let i = 1; i < allCanvases.length; i++) {
-            initCopy(allCanvases[i], grid);
-        }
-    }
-}
-
-
-regenarateButton.addEventListener("click", e => {
-    regenarate();
-})
-
-document.addEventListener("keydown", e => {
-    if (e.shiftKey && e.key.toLowerCase() === "r") {
-        regenarate();
-    }
-})
-
-
 initWhiteNoise(canvas);
 
-
 // initPerlinNoise();
-
-// console.log(noise.seed());
