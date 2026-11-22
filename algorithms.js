@@ -118,7 +118,7 @@ async function bfs(canvas, grid, drawCell, batchSize = 5) {
     while (head < queue.length) {
         const current = queue[head++];
 
-        drawCell(canvas, current.row, current.col, "lightblue");
+        drawCell(canvas, current.row, current.col, "#646fe6");
 
         // Check if we reached the finish
         if (current.row === finish.row && current.col === finish.col) {
@@ -251,7 +251,7 @@ async function dijkstra(canvas, grid, drawCell, batchSize = 5) {
         visited[row][col] = true;
 
         // Visualize explored cell
-        drawCell(canvas, row, col, "lightblue");
+        drawCell(canvas, row, col, "#646fe6");
 
         processed++;
 
@@ -408,7 +408,7 @@ async function A_star(canvas, grid, drawCell, weight = 1, batchSize = 5) {
 
         visited[row][col] = true;
 
-        drawCell(canvas, row, col, "lightblue");
+        drawCell(canvas, row, col, "#646fe6");
 
         processed++;
 
