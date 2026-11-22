@@ -37,10 +37,10 @@ console.log(row);
 console.log(column);
 
 class Map {
-    constructor(canvas, x, y) {
+    constructor(canvas, x, y, seed) {
         this.x = x;
         this.y = y;
-        this.noise = Math.random();
+        this.noiseSeed = seed;
         this.ctx = canvas.getContext("2d");
     }
     drawWhiteNoise() {
@@ -61,6 +61,22 @@ class Map {
         }
         this.ctx.fillRect(this.x, this.y, cell, cell);
     }
+    drawPerlinNoise() {
+        // let brightness = Math.floor((this.noiseSeed + 1) * 127.5);
+        // this.ctx.fillStyle = `rgb(${brightness}, ${brightness}, ${brightness})`;
+
+        if (this.weight === 1) {
+            this.ctx.fillStyle = "#ffdeb8";
+        } else if (this.weight === 5) {
+            this.ctx.fillStyle = "aqua";
+        } else if (this.weight === 10) {
+            this.ctx.fillStyle = "#ffdeb8";
+        } else {
+            this.ctx.fillStyle = "#ffdeb8";
+        }
+
+        this.ctx.fillRect(this.x, this.y, cell, cell);
+    }
 }
 
 //generate a white noise on a canvas
@@ -77,6 +93,32 @@ function initWhiteNoise(canvas) {
     }
 }
 
+const scale = 0.05;
+function initPerlinNoise() {
+    noise.seed(Math.random());
+    for (let i = 0; i < row; i++) {
+        const rows = [];
+        for (let j = 0; j < column; j++) {
+            const value = noise.perlin2(scale * j, scale * i);
+            let obj = new Map(canvas, j * 5, i * 5, value);
+
+            if (value < -0.2) {
+                obj.weight = 1;
+            } else if (value < 0.3) {
+                obj.weight = 5;
+            } else if (value < 0.65) {
+                obj.weight = 10; 
+            } else {
+                obj.weight = Infinity;
+            }
+
+            obj.drawPerlinNoise();
+            rows.push(obj);
+        }
+        grid.push(rows);
+    }
+}
+
 //for copying the original canvas into newly created canvases
 function initCopy(canvas, grid) {
     let ctx = canvas.getContext("2d");
@@ -87,7 +129,7 @@ function initCopy(canvas, grid) {
             if (obj.weight === 1) {
                 ctx.fillStyle = "white";
             } else if (obj.weight === 3) {
-                ctx.fillStyle = "green";
+                ctx.fillStyle = "#ffb35c";
             } else {
                 ctx.fillStyle = "black";
             }
@@ -239,3 +281,8 @@ regenarateButton.addEventListener("click", e => {
 
 
 initWhiteNoise(canvas);
+
+
+initPerlinNoise();
+
+// console.log(noise.seed());
