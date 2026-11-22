@@ -3,6 +3,44 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve));
 
+const speed1 = document.querySelector('[data-speed="1"]');
+const speed2 = document.querySelector('[data-speed="2"]');
+const speed5 = document.querySelector('[data-speed="5"]');
+const speed15 = document.querySelector('[data-speed="15"]');
+
+let batchSize = 5;
+
+speed1.addEventListener("click", e => {
+    batchSize = 1;
+})
+
+speed2.addEventListener("click", e => {
+    batchSize = 2;
+})
+
+speed5.addEventListener("click", e => {
+    batchSize = 5;
+})
+
+speed15.addEventListener("click", e => {
+    batchSize = 15;
+})
+
+document.addEventListener("keydown", e => {
+    if (e.key === "1") {
+        batchSize = 1;
+    }
+    if (e.key === "2") {
+        batchSize = 2;
+    }
+    if (e.key === "3") {
+        batchSize = 5;
+    } 
+    if (e.key === "4") {
+        batchSize = 15;
+    }
+})
+
 //Binary min-heap
 class MinHeap {
     constructor() {
@@ -79,7 +117,7 @@ class MinHeap {
     }
 }
 
-async function bfs(canvas, grid, drawCell, batchSize = 5) {
+async function bfs(canvas, grid, drawCell) {
     const rows = grid.length;
     const cols = grid[0].length;
 
@@ -181,14 +219,14 @@ async function bfs(canvas, grid, drawCell, batchSize = 5) {
     // Draw final path
     for (const cell of path) {
         if (window.stopAlgorithm) return
-        drawCell(canvas, cell.row, cell.col, "yellow");
+        drawCell(canvas, cell.row, cell.col, "orange");
         await nextFrame();
     }
 
     return path;
 }
 
-async function dijkstra(canvas, grid, drawCell, batchSize = 5) {
+async function dijkstra(canvas, grid, drawCell) {
     const rows = grid.length;
     const cols = grid[0]?.length;
 
@@ -335,7 +373,7 @@ async function dijkstra(canvas, grid, drawCell, batchSize = 5) {
     // Draw shortest path
     for (const cell of path) {
         if (window.stopAlgorithm) return
-        drawCell(canvas, cell.row, cell.col, "yellow");
+        drawCell(canvas, cell.row, cell.col, "orange");
         await nextFrame();
     }
 
@@ -345,7 +383,7 @@ async function dijkstra(canvas, grid, drawCell, batchSize = 5) {
     return path;
 }
 
-async function A_star(canvas, grid, drawCell, weight = 1, batchSize = 5) {
+async function A_star(canvas, grid, drawCell, weight = 1) {
     const rows = grid.length;
     const cols = grid[0]?.length;
 
@@ -477,7 +515,7 @@ async function A_star(canvas, grid, drawCell, weight = 1, batchSize = 5) {
     // Draw final path
     for (const cell of path) {
         if (window.stopAlgorithm) return
-        drawCell(canvas, cell.row, cell.col, "yellow");
+        drawCell(canvas, cell.row, cell.col, "orange");
         await nextFrame();
     }
 
