@@ -32,7 +32,7 @@ canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 
 
-const cell = 5;
+const cell = 4;
 let row = canvas.height / cell;
 let column = canvas.width / cell;
 let grid = [];
@@ -61,18 +61,6 @@ class Map {
         this.ctx.fillRect(this.x, this.y, cell, cell);
     }
     drawPerlinNoise() {
-        // let brightness = Math.floor((this.noiseSeed + 1) * 127.5);
-        // this.ctx.fillStyle = `rgb(${brightness}, ${brightness}, ${brightness})`;
-        if (this.weight === 1) {
-            this.ctx.fillStyle = "#ffdeb8";
-        } else if (this.weight === 5) {
-            this.ctx.fillStyle = "aqua";
-        } else if (this.weight === 10) {
-            this.ctx.fillStyle = "#ffdeb8";
-        } else {
-            this.ctx.fillStyle = "#ffdeb8";
-        }
-
         this.ctx.fillRect(this.x, this.y, cell, cell);
     }
 }
@@ -94,7 +82,8 @@ function initWhiteNoise(canvas) {
     }
 }
 
-const scale = 0.05;
+const scale = 0.01;
+// const scale = 3 / column; 
 function initPerlinNoise(canvas) {
     canvasDiv.classList.add("canvasesPerlin");
     canvas.classList.add("canvasPerlin");
@@ -104,24 +93,62 @@ function initPerlinNoise(canvas) {
     for (let i = 0; i < row; i++) {
         const rows = [];
         for (let j = 0; j < column; j++) {
-            const value = noise.perlin2(scale * j, scale * i);
-            let obj = new Map(canvas, j * 5, i * 5, value);
-
-            if (value < -0.2) {
+            const nx = (j / column) * 2 - 1;
+            const ny = (i / row) * 2 - 1;
+            const dist = Math.sqrt(nx * nx + ny * ny);   // 0 at center, ~1.4 at corners
+            const value = fractal(scale * j, scale * i) - dist * 0.5 + 0.3;
+            // const value = fractal(scale * j, scale * i);
+            let obj = new Map(canvas, j * cell, i * cell, value);
+            
+            if (value < 0.0) {
+                // deep water -> shallow water
+                obj.ctx.fillStyle = lerpColor("#0a3d91", "#4fd8f0", band(value, -0.4, 0.0));
                 obj.weight = 1;
+            } else if (value < 0.07) {
+                // wet sand -> dry sand
+                obj.ctx.fillStyle = lerpColor("#E8C98F", "#F6DCBD", band(value, 0.0, 0.07));
+                obj.weight = 10;
             } else if (value < 0.3) {
-                obj.weight = 5;
-            } else if (value < 0.65) {
-                obj.weight = 10; 
+                // light grass -> dark grass
+                obj.ctx.fillStyle = lerpColor("#7CFC00", "#2E8B2E", band(value, 0.07, 0.3));
             } else {
-                obj.weight = Infinity;
+                // forest -> mountain/rock
+                obj.ctx.fillStyle = lerpColor("#05472A", "#8a8a8a", band(value, 0.3, 0.6));
             }
-
             obj.drawPerlinNoise();
             rows.push(obj);
         }
         grid.push(rows);
     }
+}
+
+function fractal(x, y) {
+    let value = 0, amp = 1, freq = 1, total = 0;
+    for (let o = 0; o < 6; o++) {
+        value += noise.perlin2(x * freq, y * freq) * amp;
+        total += amp;
+        amp *= 0.5;
+        freq *= 2;
+    }
+    return value / total;
+}
+
+function hexToRgb(hex) {
+    const n = parseInt(hex.slice(1), 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+function lerpColor(c1, c2, t) {
+    const a = hexToRgb(c1), b = hexToRgb(c2);
+    const r = Math.round(a[0] + (b[0] - a[0]) * t);
+    const g = Math.round(a[1] + (b[1] - a[1]) * t);
+    const bl = Math.round(a[2] + (b[2] - a[2]) * t);
+    return `rgb(${r}, ${g}, ${bl})`;
+}
+
+// t = how far value is between lo and hi, clamped to 0..1
+function band(value, lo, hi) {
+    return Math.min(1, Math.max(0, (value - lo) / (hi - lo)));
 }
 
 //for copying the original canvas into newly created canvases
@@ -341,6 +368,8 @@ noiseSwitch.addEventListener("change", e => {
     }
 })
 
-initWhiteNoise(canvas);
+// initWhiteNoise(canvas);
+
+initPerlinNoise(canvas);
 
 // initPerlinNoise();
