@@ -79,6 +79,8 @@ class Map {
 
 //generate a white noise on a canvas
 function initWhiteNoise(canvas) {
+    canvasDiv.classList.remove("canvasesPerlin");
+    canvas.classList.remove("canvasPerlin");
     grid = [];
     isPerlin = false;
     for (let i = 0; i < row; i++) {
@@ -94,6 +96,8 @@ function initWhiteNoise(canvas) {
 
 const scale = 0.05;
 function initPerlinNoise(canvas) {
+    canvasDiv.classList.add("canvasesPerlin");
+    canvas.classList.add("canvasPerlin");
     grid = [];
     isPerlin = true;
     noise.seed(Math.random());
