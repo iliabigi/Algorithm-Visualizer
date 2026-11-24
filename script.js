@@ -6,7 +6,7 @@ const canvas = document.querySelector(".mainCanvas");
 
 const startButton = document.querySelector(".startButton");
 const regenerationButton = document.querySelector(".regenButton");
-const noiseSwitch = document.querySelector(".noiseSwitch")
+const noiseSwitch = document.querySelector(".noiseSwitch");
 
 
 const mainSelect = document.querySelector(".mainSelect");
@@ -31,11 +31,14 @@ canvas.style.backgroundColor = "white";
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 
+const cell = 5;
+const drawLineDimension = cell;
 
-const cell = 4;
+
 let row = canvas.height / cell;
 let column = canvas.width / cell;
 let grid = [];
+
 
 
 let isPerlin = false;
@@ -74,7 +77,7 @@ function initWhiteNoise(canvas) {
     for (let i = 0; i < row; i++) {
         const currentRow = [];
         for (let j = 0; j < column; j++) {
-            let obj = new Map(canvas, j * 5, i * 5, Math.random());
+            let obj = new Map(canvas, j * cell, i * cell, Math.random());
             obj.drawWhiteNoise();
             currentRow.push(obj);
         }
@@ -165,30 +168,10 @@ function initCopy(canvas, grid) {
                 } else {
                     ctx.fillStyle = "black";
                 }
-                ctx.fillRect(j * 5, i * 5, cell, cell);
+                ctx.fillRect(j * cell, i * cell, cell, cell);
             }
         }
-    } else if (isPerlin) {
-        let ctx = canvas.getContext("2d");
-        for (let i = 0; i < row; i++) {
-            for (let j = 0; j < column; j++) {
-                let obj = grid[i][j];
-                console.log(obj.weight);
-
-                if (obj.weight === 1) {
-                    ctx.fillStyle = "#ffdeb8";
-                } else if (obj.weight === 5) {
-                    ctx.fillStyle = "aqua";
-                } else if (obj.weight === 10) {
-                    ctx.fillStyle = "#ffdeb8";
-                } else {
-                    ctx.fillStyle = "#ffdeb8";
-                }
-
-                ctx.fillRect(j * 5, i * 5, cell, cell);
-            }
-        }
-    }
+    } 
     console.log(row);
     console.log(column);
 }
@@ -221,10 +204,10 @@ function handleStartButton() {
 
 //to change the color of canvas' cells
 function drawCell(canvas, row, col, color) {
-    const cell = grid[row][col];
+    const cellObject = grid[row][col];
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = color;
-    ctx.fillRect(cell.x, cell.y, 5, 5);
+    ctx.fillRect(cellObject.x, cellObject.y, drawLineDimension, drawLineDimension);
 }
 
 //Clear canvas used in the start button
@@ -236,7 +219,7 @@ function handleRegenerateButton() {
     grid = [];
     window.stopAlgorithm = true;
     (isPerlin) ? initPerlinNoise(canvas) : initWhiteNoise(canvas);
-    // initWhiteNoise(canvas);
+    //to regenerate other whitenoise canvases
     if (allCanvases.length != 1) {
         for (let i = 1; i < allCanvases.length; i++) {
             initCopy(allCanvases[i], grid);
@@ -256,6 +239,7 @@ canvasSize.addEventListener("input", e => {
     console.log(row);
     console.log(column);
 
+    //remove all the other canvases to reset upon changing the size
     while (allCanvases.length != 1) {
         canvasDiv.lastElementChild.remove();
         selects.pop();
@@ -368,8 +352,8 @@ noiseSwitch.addEventListener("change", e => {
     }
 })
 
-// initWhiteNoise(canvas);
+initWhiteNoise(canvas);
 
-initPerlinNoise(canvas);
+// initPerlinNoise(canvas);
 
 // initPerlinNoise();
