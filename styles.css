@@ -85,3 +85,13 @@ body:has(.canvasesPerlin) .top {
     width: 100%;
     height: auto;
 }
+
+.canvases.canvasesPerlin {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+}
+
+.canvases.canvasesPerlin > * {
+    grid-column: 1 / -1  !important;
+    grid-row: 1   !important;
+}

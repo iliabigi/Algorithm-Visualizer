@@ -263,51 +263,51 @@ regenerationButton.addEventListener("click", e => {
 
 //to create another copy canvas using shift + "+" button shortcut
 document.addEventListener("keydown", e => {
-    if (e.shiftKey && e.key.toLowerCase() === "+") {
-        let newCanvas = document.createElement("canvas");
-        newCanvas.classList.add("canvas");
+    if (!isPerlin) {
+        if (e.shiftKey && e.key.toLowerCase() === "+") {
+            let newCanvas = document.createElement("canvas");
+            newCanvas.classList.add("canvas");
 
-        let newDiv = document.createElement("div");
-        newDiv.classList.add("containCanvas");
+            let newDiv = document.createElement("div");
+            newDiv.classList.add("containCanvas");
 
-        newDiv.appendChild(newCanvas);
-        canvasDiv.appendChild(newDiv);
+            newDiv.appendChild(newCanvas);
+            canvasDiv.appendChild(newDiv);
 
-        let newSelect = document.createElement("select");
+            let newSelect = document.createElement("select");
 
-        algorithmsList.forEach((val) => {
-            let newOption = document.createElement("option");
-            newOption.value = val;
-            newOption.textContent = val;
+            algorithmsList.forEach((val) => {
+                let newOption = document.createElement("option");
+                newOption.value = val;
+                newOption.textContent = val;
 
-            newSelect.appendChild(newOption);
-        });
+                newSelect.appendChild(newOption);
+            });
 
-        newDiv.appendChild(newSelect);
-        selects.push(newSelect);
+            newDiv.appendChild(newSelect);
+            selects.push(newSelect);
 
-        let canvasChildren = canvasDiv.children;
+            let canvasChildren = canvasDiv.children;
 
-        if (canvasChildren.length === 1) {
-            canvasChildren[0].style.gridColumn = "2";
-        } 
-        else if (canvasChildren.length === 2) {
-            canvasChildren[0].style.gridColumn = "2";
-            canvasChildren[1].style.gridColumn = "3";
-        } 
-        else if (canvasChildren.length === 3) {
-            canvasChildren[0].style.gridColumn = "2";
-            canvasChildren[1].style.gridColumn = "3";
-            canvasChildren[2].style.gridColumn = "1";
-            canvasChildren[2].style.gridRow = "1";
+            if (canvasChildren.length === 1) {
+                canvasChildren[0].style.gridColumn = "2";
+            } else if (canvasChildren.length === 2) {
+                canvasChildren[0].style.gridColumn = "2";
+                canvasChildren[1].style.gridColumn = "3";
+            } else if (canvasChildren.length === 3) {
+                canvasChildren[0].style.gridColumn = "2";
+                canvasChildren[1].style.gridColumn = "3";
+                canvasChildren[2].style.gridColumn = "1";
+                canvasChildren[2].style.gridRow = "1";
+            }
+
+            newCanvas.style.backgroundColor = "white";
+            newCanvas.width = canvasWidth;
+            newCanvas.height = canvasHeight;
+
+            initCopy(newCanvas, grid);
+            allCanvases.push(newCanvas);
         }
-
-        newCanvas.style.backgroundColor = "white";
-        newCanvas.width = canvasWidth;
-        newCanvas.height = canvasHeight;
-
-        initCopy(newCanvas, grid);
-        allCanvases.push(newCanvas);
     }
 });
 
@@ -343,11 +343,6 @@ noiseSwitch.addEventListener("change", e => {
 
     } else {
         isPerlin = false;
-        while (canvasDiv.children.length !== 1) {
-            canvasDiv.lastElementChild.remove();
-            selects.pop();
-            allCanvases.pop();
-        }
         initWhiteNoise(canvas);
     }
 })
