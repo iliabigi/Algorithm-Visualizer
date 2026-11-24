@@ -117,19 +117,9 @@ class MinHeap {
     }
 }
 
-async function bfs(canvas, grid, drawCell) {
+async function bfs(canvas, grid, drawCell, start = { row: 0, col: 0}, finish = { row: (grid.length - 1), col: (grid[0].length - 1)}) {
     const rows = grid.length;
     const cols = grid[0].length;
-
-    const start = {
-        row: 0, 
-        col: 0
-    };
-
-    const finish = {
-        row: rows - 1, 
-        col: cols - 1
-    };
 
     const visited = Array.from(
         {length: rows},
@@ -226,14 +216,11 @@ async function bfs(canvas, grid, drawCell) {
     return path;
 }
 
-async function dijkstra(canvas, grid, drawCell) {
+async function dijkstra(canvas, grid, drawCell, start = { row: 0, col: 0}, finish = { row: (grid.length - 1), col: (grid[0].length - 1)}) {
     const rows = grid.length;
-    const cols = grid[0]?.length;
+    const cols = grid[0].length;
 
     if (!rows || !cols) return null;
-
-    const start = { row: 0, col: 0 };
-    const finish = { row: rows - 1, col: cols - 1 };
 
     // Initialize distances
     const distances = Array.from(
@@ -383,14 +370,11 @@ async function dijkstra(canvas, grid, drawCell) {
     return path;
 }
 
-async function A_star(canvas, grid, drawCell, weight = 1) {
+async function A_star(canvas, grid, drawCell, weight = 1, start = { row: 0, col: 0}, finish = { row: (grid.length - 1), col: (grid[0].length - 1)}) {
     const rows = grid.length;
-    const cols = grid[0]?.length;
+    const cols = grid[0].length;
 
     if (!rows || !cols) return null;
-
-    const start = { row: 0, col: 0 };
-    const finish = { row: rows - 1, col: cols - 1 };
 
     // Manhattan distance heuristic (4-directional movement)
     // Admissible as long as the minimum cell weight is 1, which it is in your grid
