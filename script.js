@@ -107,17 +107,19 @@ function initPerlinNoise(canvas) {
             if (value < 0.0) {
                 // deep water -> shallow water
                 obj.ctx.fillStyle = lerpColor("#0a3d91", "#4fd8f0", band(value, -0.4, 0.0));
-                obj.weight = 1;
+                obj.weight = Infinity;
             } else if (value < 0.07) {
                 // wet sand -> dry sand
                 obj.ctx.fillStyle = lerpColor("#E8C98F", "#F6DCBD", band(value, 0.0, 0.07));
-                obj.weight = 10;
+                obj.weight = 3;
             } else if (value < 0.3) {
                 // light grass -> dark grass
                 obj.ctx.fillStyle = lerpColor("#7CFC00", "#2E8B2E", band(value, 0.07, 0.3));
+                obj.weight = 1;
             } else {
                 // forest -> mountain/rock
                 obj.ctx.fillStyle = lerpColor("#05472A", "#8a8a8a", band(value, 0.3, 0.6));
+                obj.weight = 10;
             }
             obj.drawPerlinNoise();
             rows.push(obj);
