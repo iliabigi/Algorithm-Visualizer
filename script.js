@@ -31,7 +31,6 @@ canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 
 const cell = 5;
-const drawLineDimension = cell;
 
 
 let row = canvas.height / cell;
@@ -180,6 +179,8 @@ function initCopy(canvas, grid) {
 
 function handleStartButton() {
     console.log(start);
+    console.log(finish);
+    
     window.stopAlgorithm = false;
 
     clearCanvas(canvas);
@@ -197,6 +198,7 @@ function handleStartButton() {
                 } else {
                     algorithms.A_star(allCanvases[i], grid, drawCell, 1);
                 }
+                
                 break;
 
             case "Weighted A*":
@@ -218,7 +220,7 @@ function handleStartButton() {
                     algorithms.bfs(allCanvases[i], grid, drawCell);
                 }
                 break;
-                
+
             case "Dijkstra":
                 if (hasStart === true && hasFinish === false) {
                     algorithms.dijkstra(allCanvases[i], grid, drawCell, start);
@@ -230,10 +232,13 @@ function handleStartButton() {
                 break;
         }
     }
+
+    hasStart = false;
+    hasFinish = false;
 }
 
 //to change the color of canvas' cells
-function drawCell(canvas, row, col, color) {
+function drawCell(canvas, row, col, color, drawLineDimension = cell) {
     const cellObject = grid[row][col];
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = color;
@@ -255,6 +260,8 @@ function handleRegenerateButton() {
             initCopy(allCanvases[i], grid);
         }
     }
+    hasStart = false;
+    hasFinish = false;
 }
 
 canvas.addEventListener("click", e => {
@@ -272,6 +279,7 @@ canvas.addEventListener("click", e => {
         start.row = row;
         start.col = column;
 
+        drawCell(canvas, row, column, "aqua", cell * 4);
         console.log(start);
     } else if (hasStart === true && hasFinish === false) {
         hasFinish = true;
@@ -287,13 +295,14 @@ canvas.addEventListener("click", e => {
         finish.row = row;
         finish.col = column;
 
+        drawCell(canvas, row, column, "red", cell * 4);
         console.log(finish);
     } else if (hasStart === true && hasFinish === true) {
         hasStart = false;
     } else {
         hasFinish = false
     }
-    
+
 })
 
 canvasSize.addEventListener("input", e => {
