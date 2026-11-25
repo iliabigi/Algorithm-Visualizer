@@ -39,6 +39,9 @@ let column = canvas.width / cell;
 let grid = [];
 
 const start = {};
+let hasStart = false;
+const finish = {};
+let hasFinish = false;
 
 let isPerlin = false;
 
@@ -187,16 +190,16 @@ function handleStartButton() {
     for (let i = 0; i < selects.length; i++) {
         switch (selects[i].value) {
             case "A*":
-                algorithms.A_star(allCanvases[i], grid, drawCell, 1, start);
+                algorithms.A_star(allCanvases[i], grid, drawCell, 1, start, finish);
                 break;
             case "Weighted A*":
-                algorithms.A_star(allCanvases[i], grid, drawCell, 3, start);
+                algorithms.A_star(allCanvases[i], grid, drawCell, 3, start, finish);
                 break;
             case "BFS":
-                algorithms.bfs(allCanvases[i], grid, drawCell, start);
+                algorithms.bfs(allCanvases[i], grid, drawCell, start, finish);
                 break;
             case "Dijkstra":
-                algorithms.dijkstra(allCanvases[i], grid, drawCell, start);
+                algorithms.dijkstra(allCanvases[i], grid, drawCell, start, finish);
                 break;
         }
     }
@@ -228,19 +231,42 @@ function handleRegenerateButton() {
 }
 
 canvas.addEventListener("click", e => {
-    let canvasXposition = canvas.getBoundingClientRect().left;
-    let canvasYposition = canvas.getBoundingClientRect().top;
+    if (hasStart === false && hasFinish === false) {
+        hasStart = true;
+        let canvasXposition = canvas.getBoundingClientRect().left;
+        let canvasYposition = canvas.getBoundingClientRect().top;
 
-    let mouseX = (e.x - canvasXposition) * (canvas.width / canvas.getBoundingClientRect().width);
-    let mouseY = (e.y - canvasYposition) * (canvas.height / canvas.getBoundingClientRect().height);
+        let mouseX = (e.x - canvasXposition) * (canvas.width / canvas.getBoundingClientRect().width);
+        let mouseY = (e.y - canvasYposition) * (canvas.height / canvas.getBoundingClientRect().height);
 
-    let row = Math.floor(mouseY / cell);
-    let column = Math.floor(mouseX / cell)
+        let row = Math.floor(mouseY / cell);
+        let column = Math.floor(mouseX / cell)
 
-    start.row = row;
-    start.col = column;
+        start.row = row;
+        start.col = column;
 
-    console.log(start);
+        console.log(start);
+    } else if (hasStart === true && hasFinish === false) {
+        hasFinish = true;
+        let canvasXposition = canvas.getBoundingClientRect().left;
+        let canvasYposition = canvas.getBoundingClientRect().top;
+
+        let mouseX = (e.x - canvasXposition) * (canvas.width / canvas.getBoundingClientRect().width);
+        let mouseY = (e.y - canvasYposition) * (canvas.height / canvas.getBoundingClientRect().height);
+
+        let row = Math.floor(mouseY / cell);
+        let column = Math.floor(mouseX / cell)
+
+        finish.row = row;
+        finish.col = column;
+
+        console.log(finish);
+    } else if (hasStart === true && hasFinish === true) {
+        hasStart = false;
+    } else {
+        hasFinish = false
+    }
+    
 })
 
 canvasSize.addEventListener("input", e => {
