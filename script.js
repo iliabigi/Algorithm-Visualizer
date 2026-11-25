@@ -39,7 +39,6 @@ let column = canvas.width / cell;
 let grid = [];
 
 const start = {};
-const standardAstarWeight = 1;
 
 let isPerlin = false;
 
@@ -188,16 +187,16 @@ function handleStartButton() {
     for (let i = 0; i < selects.length; i++) {
         switch (selects[i].value) {
             case "A*":
-                algorithms.A_star(allCanvases[i], grid, drawCell, standardAstarWeight, start);
+                algorithms.A_star(allCanvases[i], grid, drawCell, 1, start);
                 break;
             case "Weighted A*":
-                algorithms.A_star(allCanvases[i], grid, drawCell, 3);
+                algorithms.A_star(allCanvases[i], grid, drawCell, 3, start);
                 break;
             case "BFS":
-                algorithms.bfs(allCanvases[i], grid, drawCell);
+                algorithms.bfs(allCanvases[i], grid, drawCell, start);
                 break;
             case "Dijkstra":
-                algorithms.dijkstra(allCanvases[i], grid, drawCell);
+                algorithms.dijkstra(allCanvases[i], grid, drawCell, start);
                 break;
         }
     }
