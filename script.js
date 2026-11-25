@@ -11,6 +11,7 @@ const noiseSwitch = document.querySelector(".noiseSwitch");
 
 const mainSelect = document.querySelector(".mainSelect");
 const canvasSize = document.querySelector(".sizeInput");
+const cellSize = document.querySelector(".cellInput");
 
 
 const selects = [];
@@ -30,7 +31,7 @@ canvas.style.backgroundColor = "white";
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 
-const cell = 5;
+let cell = 5;
 
 
 let row = canvas.height / cell;
@@ -71,6 +72,9 @@ class Map {
 
 //generate a white noise on a canvas
 function initWhiteNoise(canvas) {
+    hasStart = false;
+    hasFinish = false;
+
     canvasDiv.classList.remove("canvasesPerlin");
     canvas.classList.remove("canvasPerlin");
     grid = [];
@@ -89,6 +93,9 @@ function initWhiteNoise(canvas) {
 const scale = 0.01;
 // const scale = 3 / column; 
 function initPerlinNoise(canvas) {
+    hasStart = false;
+    hasFinish = false;
+    
     canvasDiv.classList.add("canvasesPerlin");
     canvas.classList.add("canvasPerlin");
     grid = [];
@@ -327,11 +334,32 @@ canvasSize.addEventListener("input", e => {
     }
 })
 
+cellSize.addEventListener("change", e => {
+    const size = Number(cellSize.value);
+    cell = size;
+    row = canvas.height / cell;
+    column = canvas.width / cell;
+    (isPerlin) ? initPerlinNoise(canvas) : initWhiteNoise(canvas);
+
+    while (allCanvases.length != 1) {
+        canvasDiv.lastElementChild.remove();
+        selects.pop();
+        allCanvases.pop();
+    }
+})
+
 canvasSize.addEventListener("keydown", e => {
     if (e.key === "Enter") {
         canvasSize.blur();
     }
 })
+
+cellSize.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+        canvasSize.blur();
+    }
+})
+
 
 startButton.addEventListener("click", e => {
     handleStartButton();
