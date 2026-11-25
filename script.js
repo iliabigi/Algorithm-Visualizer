@@ -18,7 +18,6 @@ selects.push(mainSelect);
 const allCanvases = [];
 allCanvases.push(canvas);
 
-
 const algorithmsList = ["A*", "Weighted A*", "BFS", "Dijkstra"];
 window.stopAlgorithm = false;
 
@@ -39,7 +38,8 @@ let row = canvas.height / cell;
 let column = canvas.width / cell;
 let grid = [];
 
-
+const start = {};
+const standardAstarWeight = 1;
 
 let isPerlin = false;
 
@@ -177,6 +177,7 @@ function initCopy(canvas, grid) {
 }
 
 function handleStartButton() {
+    console.log(start);
     window.stopAlgorithm = false;
 
     clearCanvas(canvas);
@@ -187,7 +188,7 @@ function handleStartButton() {
     for (let i = 0; i < selects.length; i++) {
         switch (selects[i].value) {
             case "A*":
-                algorithms.A_star(allCanvases[i], grid, drawCell);
+                algorithms.A_star(allCanvases[i], grid, drawCell, standardAstarWeight, start);
                 break;
             case "Weighted A*":
                 algorithms.A_star(allCanvases[i], grid, drawCell, 3);
@@ -226,6 +227,22 @@ function handleRegenerateButton() {
         }
     }
 }
+
+canvas.addEventListener("click", e => {
+    let canvasXposition = canvas.getBoundingClientRect().left;
+    let canvasYposition = canvas.getBoundingClientRect().top;
+
+    let mouseX = (e.x - canvasXposition) * (canvas.width / canvas.getBoundingClientRect().width);
+    let mouseY = (e.y - canvasYposition) * (canvas.height / canvas.getBoundingClientRect().height);
+
+    let row = Math.floor(mouseY / cell);
+    let column = Math.floor(mouseX / cell)
+
+    start.row = row;
+    start.col = column;
+
+    console.log(start);
+})
 
 canvasSize.addEventListener("input", e => {
     const size = Number(canvasSize.value);
