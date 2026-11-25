@@ -190,16 +190,43 @@ function handleStartButton() {
     for (let i = 0; i < selects.length; i++) {
         switch (selects[i].value) {
             case "A*":
-                algorithms.A_star(allCanvases[i], grid, drawCell, 1, start, finish);
+                if (hasStart === true && hasFinish === false) {
+                    algorithms.A_star(allCanvases[i], grid, drawCell, 1, start);
+                } else if (hasStart === true && hasFinish === true) {
+                    algorithms.A_star(allCanvases[i], grid, drawCell, 1, start, finish);
+                } else {
+                    algorithms.A_star(allCanvases[i], grid, drawCell, 1);
+                }
                 break;
+
             case "Weighted A*":
-                algorithms.A_star(allCanvases[i], grid, drawCell, 3, start, finish);
+                if (hasStart === true && hasFinish === false) {
+                    algorithms.A_star(allCanvases[i], grid, drawCell, 3, start);
+                } else if (hasStart === true && hasFinish === true) {
+                    algorithms.A_star(allCanvases[i], grid, drawCell, 3, start, finish);
+                } else {
+                    algorithms.A_star(allCanvases[i], grid, drawCell, 3);
+                }
                 break;
+
             case "BFS":
-                algorithms.bfs(allCanvases[i], grid, drawCell, start, finish);
+                if (hasStart === true && hasFinish === false) {
+                    algorithms.bfs(allCanvases[i], grid, drawCell, start);
+                } else if (hasStart === true && hasFinish === true) {
+                    algorithms.bfs(allCanvases[i], grid, drawCell, start, finish);
+                } else {
+                    algorithms.bfs(allCanvases[i], grid, drawCell);
+                }
                 break;
+                
             case "Dijkstra":
-                algorithms.dijkstra(allCanvases[i], grid, drawCell, start, finish);
+                if (hasStart === true && hasFinish === false) {
+                    algorithms.dijkstra(allCanvases[i], grid, drawCell, start);
+                } else if (hasStart === true && hasFinish === true) {
+                    algorithms.dijkstra(allCanvases[i], grid, drawCell, start, finish);
+                } else {
+                    algorithms.dijkstra(allCanvases[i], grid, drawCell);
+                }
                 break;
         }
     }
